@@ -13,9 +13,6 @@ foreach ($ary as $k => $n){
     $total += $n;
     $kyouka .= $k . " ";
 }
-
-
-
 ?>
 
 
@@ -31,6 +28,10 @@ foreach ($ary as $k => $n){
     <div>
         <?php
         echo ($total);
+        ?>
+        
+        <div>
+        <?php
         echo($kyouka);
 
         ?>
