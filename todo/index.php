@@ -1,5 +1,7 @@
 <?php
 
+require_once("functions.php");
+
 // クラスの中身はどうやって調べるんだ？
 
 // echo "<pre>";
@@ -11,22 +13,15 @@ if(isset($_POST["submit"])){  // $_POSTにsubmitが存在するか？
     $name = $_POST["name"];
     $name = htmlspecialchars($name, ENT_QUOTES);  // SQLインジェクション対策の関数
 
-    $dsn =
-    "mysql:dbname=todolist;host=localhost;charset=utf8";
-    $user = "root";
-    $password = "1234";
+    $dbh = db_connect();
 
-    $dbh = new PDO($dsn, $user, $password);  // PDO: DB接続をするためのクラス
-    $dbh->query("SET NAMES utf8");  // DB接続時の文字化けを解消する, -> はプロパティへのアクセス、メソッドの呼び出し
-
-    $dbh->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);  // https://www.php.net/manual/ja/pdo.setattribute.php
-    // プリベアドステートメント→サニタイズ；無害化する仕組みを適用する何か
 
     $sql = "insert into tasks (name, done) values (?, 0)";  // SQLインジェクション対策のプレースホルダ(=?)
     $stmt = $dbh->prepare($sql);
 
     $stmt->bindValue(1, $name, PDO::PARAM_STR);  // たぶん$sqlの第一引数"name"に"$name"が対応してる SQLに値をバインド（挿入？）する
 
+    // staticメソッド→::　インスタンス化してアクセスするとき→ ->
     // PDO::PARAM_STRについて http://blog.a-way-out.net/blog/2013/12/18/pdo-prepare-statement-numeric-literal-part2/
     // "SQL CHAR, VARCHAR, または他の文字列データ型を表します。" by 公式リファレンス
 
@@ -40,7 +35,7 @@ if(isset($_POST["submit"])){  // $_POSTにsubmitが存在するか？
 }
 // echo($dbh);
 // get_class_vars(string $dbh):array;
-var_dump($dbh);
+// var_dump($dbh);
 
 
 ?>
@@ -63,6 +58,21 @@ var_dump($dbh);
         </li>
         </ul>
     </form>
-    
+
+<?php
+$dbh = db_connect();
+
+$sql = "select id, name, done from tasks order by id desc;";
+
+$stmt = $dbh->prepare($sql);
+$stmt->execute();
+$dbh = null;
+
+while($task = $stmt->fetch(PDO::FETCH_ASSOC)){
+    echo "<pre>";
+    echo var_dump($task);
+    echo "</pre>";
+}
+?>
 </body>
 </html>
