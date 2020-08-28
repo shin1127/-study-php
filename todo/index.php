@@ -20,6 +20,7 @@ if(isset($_POST["submit"])){  // $_POSTにsubmitが存在するか？
     $dbh->query("SET NAMES utf8");  // DB接続時の文字化けを解消する, -> はプロパティへのアクセス、メソッドの呼び出し
 
     $dbh->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);  // https://www.php.net/manual/ja/pdo.setattribute.php
+    // プリベアドステートメント→サニタイズ；無害化する仕組みを適用する何か
 
     $sql = "insert into tasks (name, done) values (?, 0)";  // SQLインジェクション対策のプレースホルダ(=?)
     $stmt = $dbh->prepare($sql);
@@ -27,6 +28,7 @@ if(isset($_POST["submit"])){  // $_POSTにsubmitが存在するか？
     $stmt->bindValue(1, $name, PDO::PARAM_STR);  // たぶん$sqlの第一引数"name"に"$name"が対応してる SQLに値をバインド（挿入？）する
 
     // PDO::PARAM_STRについて http://blog.a-way-out.net/blog/2013/12/18/pdo-prepare-statement-numeric-literal-part2/
+    // "SQL CHAR, VARCHAR, または他の文字列データ型を表します。" by 公式リファレンス
 
     $stmt->execute();
 
