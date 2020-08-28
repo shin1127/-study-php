@@ -30,13 +30,27 @@ if(isset($_POST["submit"])){  // $_POSTにsubmitが存在するか？
     $dbh = null;
 
     unset($name);
-
-    
 }
 // echo($dbh);
 // get_class_vars(string $dbh):array;
 // var_dump($dbh);
 
+
+if (isset($_POST["method"]) && ($_POST["method"]=== "put")){
+    $id = $_POST["id"];
+    $id = htmlspecialchars($id, ENT_QUOTES);
+    $id = (int)$id;  // キャスト
+
+    $dbh = db_connect();
+
+    $sql = "update tasks set done = 1 where id = ?";
+    $stmt = $dbh->prepare($sql);
+
+    $stmt->bindValue(1, $id, PDO::PARAM_INT);
+    $stmt->execute();
+
+    $dbh = null;
+}
 
 ?>
 
@@ -59,19 +73,34 @@ if(isset($_POST["submit"])){  // $_POSTにsubmitが存在するか？
         </ul>
     </form>
 
+<ul>
+
 <?php
 $dbh = db_connect();
 
-$sql = "select id, name, done from tasks order by id desc;";
+$sql = "select id, name from tasks where done = 0 order by id desc;";
 
-$stmt = $dbh->prepare($sql);
+// $stmt = $dbh->prepare($sql);
+$stmt = $dbh->query($sql);  // ユーザーからの入力がないSQLはqueryメソッドでもよい
+// cf: https://se-tomo.com/2018/07/12/php%E3%81%AEquery%E3%81%A8prepare%E3%81%AE%E9%81%95%E3%81%84/
+
 $stmt->execute();
 $dbh = null;
 
-while($task = $stmt->fetch(PDO::FETCH_ASSOC)){
-    echo "<pre>";
-    echo var_dump($task);
-    echo "</pre>";
+while($task = $stmt->fetch(PDO::FETCH_ASSOC)){  // DBの次の行を取得する、取得できなければfalseが返る
+    // 連想配列の形でフィールドを取得
+
+    print "<li>";
+    print $task["name"];
+
+    print '
+    <form action="index.php" method="post">
+    <input type="hidden" name="method" value="put">
+    <input type="hidden" name="id" value="' . $task['id'] . '">
+    <button type="submit">済んだ</button>
+    </form>
+    ';
+    
 }
 ?>
 </body>
