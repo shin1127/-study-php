@@ -10,7 +10,7 @@ function db_connect(){
         $dbh = new PDO($dsn, $user, $password);
         $dbh->query("set names utf8");
 
-        $dbh->setAttribute(PRO::ATTR_EMULATE_PREPARES, false);
+        $dbh->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
         return $dbh;
 

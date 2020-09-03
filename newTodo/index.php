@@ -51,7 +51,11 @@ $stmt = $dbh->query($sql);
 $stmt->execute();
 
 
-while($task = $stmt->fetch(PDO::FETCH_ASSOC))
+while($task = $stmt->fetch(PDO::FETCH_ASSOC)){
+
+    print "<br>";
+    print $task["name"];
+};
 
 
 ?>
