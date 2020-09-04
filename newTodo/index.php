@@ -7,16 +7,30 @@ if(isset($_POST["submit"])){  // $_POSTにsubmitが存在するか？
     $name = $_POST["name"];
     $name = htmlspecialchars($name, ENT_QUOTES);  // SQLインジェクション対策の関数
 
+    $priority = $_POST["priority"];
+
     $dbh = db_connect();
 
-    $sql = "insert into tasks (name, done) values (?, 0)";  // SQLインジェクション対策のプレースホルダ(=?)
+    // $sql = "insert into phptodo (name, done, priority) values (?, 0, ?)";  // SQLインジェクション対策のプレースホルダ(=?)
+    // $stmt = $dbh->prepare($sql);
+
+    // $stmt->bindValue(1, $name, PDO::PARAM_STR);
+    // $stmt->bindValue(2, $priority, PDO::PARAM_STR);
+    // $stmt->execute();
+
+
+    $sql = "insert into phptodo (name, done, priority) values (:name, 0, :priority)";  // SQLインジェクション対策のプレースホルダ(=?)
     $stmt = $dbh->prepare($sql);
 
-    $stmt->bindValue(1, $name, PDO::PARAM_STR);
+    $stmt->bindValue(":name", $name, PDO::PARAM_STR);
+    $stmt->bindValue(":priority", $priority, PDO::PARAM_STR);
     $stmt->execute();
+
+
 
     $dbh = null;
     unset($name);
+    unset($priority);
 }
 
 ?>
@@ -34,7 +48,13 @@ if(isset($_POST["submit"])){  // $_POSTにsubmitが存在するか？
 
     <form action="index.php" method="post">
     <div>タスク名</div>
-    <input type="text" name="name">
+    <input type="text" name="name"><br>
+    <select name="priority">
+    <option value="high">高い</option>
+    <option value="middle">普通</option>
+    <option value="row">低い</option>
+    </select>
+    <br>
 
     <button type="submit" name="submit">追加</button>
     </form>
@@ -59,7 +79,7 @@ while($task = $stmt->fetch(PDO::FETCH_ASSOC)){
 
 
 ?>
-    
+
 
     
 </body>
