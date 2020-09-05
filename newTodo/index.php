@@ -71,7 +71,7 @@ if(isset($_POST["submit"])){  // $_POSTにsubmitが存在するか？
 
 $dbh = db_connect();
 
-$sql = "select id, name from phptodo where done = 0 order by id desc;";
+$sql = "select id, name, priority from phptodo where done = 0 order by id desc;";
 
 $stmt = $dbh->query($sql);
 $stmt->execute();
@@ -81,6 +81,7 @@ while($task = $stmt->fetch(PDO::FETCH_ASSOC)){
 
     print "<br>";
     print $task["name"];
+    print $task["priority"];
 };
 
 
