@@ -14,13 +14,19 @@ if(isset($_POST["submit"])){  // $_POSTにsubmitが存在するか？
     // $sql = "insert into phptodo (name, done, priority) values (?, 0, ?)";  // SQLインジェクション対策のプレースホルダ(=?)
     // $stmt = $dbh->prepare($sql);
 
-    // $stmt->bindValue(1, $name, PDO::PARAM_STR);
+    // $stmt->bindValue(1, $name, PDO::PARAM_STR);  // 第一引数：何番目の?か　第二：対応する文字列を格納した変数など　第三：第二引数がどのデータ型になるかを指定する
+                                                    // PDO::PARAM_STRの実態はINT型の2
+
     // $stmt->bindValue(2, $priority, PDO::PARAM_STR);
     // $stmt->execute();
 
 
+    // ? は:hogeで代替できる
     $sql = "insert into phptodo (name, done, priority) values (:name, 0, :priority)";  // SQLインジェクション対策のプレースホルダ(=?)
     $stmt = $dbh->prepare($sql);
+
+    print("PARAM_STRは ");
+    print(PDO::PARAM_STR);
 
     $stmt->bindValue(":name", $name, PDO::PARAM_STR);
     $stmt->bindValue(":priority", $priority, PDO::PARAM_STR);
