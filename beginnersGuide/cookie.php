@@ -1,8 +1,8 @@
 <?php
 if ($_POST != null){
-    $set = $_POST["text1"];
+    $str = $_POST["text1"];
     setcookie("mycookie", htmlspecialchars($str),time() + 60 * 1);
-    header("Location: ./index.php");
+    header("Location: ./cookie.php");
 }
 ?>
 
